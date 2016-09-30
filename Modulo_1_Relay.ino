@@ -11,8 +11,8 @@ const int Relay_2=6;
 boolean ledON=1;
 
 unsigned char canId;
-unsigned char ID_Local=0x01;
- char ID_Master=0x02;
+unsigned char ID_Local=0x02;
+ char ID_Master=0x01;
 
 unsigned char MsgUpOk[8]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 unsigned char MsgUpEEprom[8]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
@@ -47,8 +47,8 @@ void setup()
     digitalWrite(Relay_1,true);
     digitalWrite(Relay_2,true);
     pinMode(interrupcion ,INPUT);
-    ID_Local=EEPROM.read(0x00);
-    ID_Master=EEPROM.read(0x01);
+  //  ID_Local=EEPROM.read(0x00);
+  //  ID_Master=EEPROM.read(0x01);
    
 START_INIT:
 
@@ -85,11 +85,11 @@ void loop()
 
         
 
-          if( canId==0xFF){// MAster  broadcast 0xFF para que todos los ID LOCALEs publiquen su info
+          if( canId==0x00){// MAster  broadcast 0xFF para que todos los ID LOCALEs publiquen su info
             Led_mensaje_recibido_blink();
             CAN.sendMsgBuf(ID_Local,0,8,MsgUpEEprom);
           }
-            if( canId == ID_Master){  // su el Master conside con el emisor
+          if( canId == ID_Master){  // su el Master conside con el emisor
               Led_mensaje_recibido_blink();
               if(0x00==MsgLeido[0]){    //si el control es 00 solo envia su info el local
                  CAN.sendMsgBuf(ID_Local,0,8,MsgUpEEprom);
