@@ -32,7 +32,10 @@ MCP_CAN CAN(SPI_CS_PIN);                                    // Set CS pin
 void setup()
 {
     Serial.begin(9600);
-    
+    Serial.print("ID_Local:");
+    Serial.println(ID_Local);
+    Serial.print("ID_Master:");
+    Serial.println(ID_Master);
     EEPROM.write(0x00,ID_Local);// escribe en la dir 0x00 el id del dispositivo LOCAL
     EEPROM.write(0x01,ID_Master);// escribe en la dir 0x01 el id del MASTER controlador
     ID_Local= EEPROM.read(0x00);    // almaceno el Id del receptor
