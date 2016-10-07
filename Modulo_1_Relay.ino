@@ -11,12 +11,25 @@ const int Relay_2=6;
 boolean ledON=1;
 
 unsigned char canId;
-unsigned char ID_Local=0x02;
- char ID_Master=0x01;
+unsigned char ID_Local=0x02;//2
+ char ID_Master=0x01;//1
+
+/////////////ACTUADOR 
+
+
+
+unsigned char onR1_onR2[8]   = {0x01,0x11,0,0,0,0,0,0};
+unsigned char offR1_offR2[8] = {0x01,0x00,0,0,0,0,0,0};
+unsigned char onR1_offR2[8]  = {0x01,0x01,0,0,0,0,0,0};
+unsigned char offR1_onR2[8]  = {0x01,0x10,0,0,0,0,0,0};
+
+////////////////////////////
+
 
 unsigned char MsgUpOk[8]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 unsigned char MsgUpEEprom[8]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 unsigned char MsgLeido[8]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+unsigned char MsgACS712[8]={0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 
 unsigned char  reg_control=0x00;
 unsigned char  reg_config=0x00;
@@ -58,6 +71,7 @@ START_INIT:
     if(CAN_OK == CAN.begin(CAN_250KBPS,MCP_8MHz))                 
         {CAN.sendMsgBuf(ID_Local,0,8,MsgUpEEprom);
          Led_CanUpOK();
+            CAN.sendMsgBuf(ID_Local,0, 8, offR1_offR2);
          }
     else
         {
@@ -72,7 +86,7 @@ unsigned char buf[8];
 
 void loop()
 {   
-
+/*
     if(!digitalRead(interrupcion))            // check if data coming
     
     {     
@@ -126,11 +140,20 @@ void loop()
               CAN.sendMsgBuf(ID_Local,0,8,MsgUpEEprom);
               Led_grabacion_3();}
             }
-      
-          
-       
-      
-      }
+       }
+  */
+    CAN.sendMsgBuf(ID_Local,0, 8,onR1_onR2);
+     CAN.sendMsgBuf(ID_Local,0, 8, MsgACS712);
+    Led_Blink(1);
+    delay(5000);
+  
+  
+    CAN.sendMsgBuf(ID_Local,0, 8, offR1_offR2);
+    CAN.sendMsgBuf(ID_Local,0, 8, MsgACS712);
+   Led_Blink(2);
+   delay(5000);                  
+   
+
         
     }
 
@@ -215,6 +238,20 @@ void ledColor(char var) {
   break;
  }
 }
+
+
+
+
+ void Led_Blink(int c){
+
+    for(int i=0;i<c;i++){
+           delay(200);
+           digitalWrite(LED,true);
+           delay(200);
+           digitalWrite(LED,false);
+          
+    }
+  }
 
 /*********************************************************************************************************
   END FILE
